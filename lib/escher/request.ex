@@ -1,6 +1,6 @@
 defmodule Escher.Request do
 
-  defstruct method: "GET", path: nil, params: %{}, headers: %{}, payload: nil, scheme: nil
+  defstruct method: "GET", path: nil, params: %{}, headers: %{}, payload: nil
 
 
   def from_url(url) do
@@ -8,7 +8,18 @@ defmodule Escher.Request do
     params = URI.decode_query(uri.query)
     headers = %{"host" => uri.host}
 
-    %Escher.Request{path: uri.path, scheme: uri.scheme, params: params, headers: headers}
+    %Escher.Request{path: uri.path, params: params, headers: headers}
+  end
+
+  def from_message(message) when is_binary(message) do
+    lines = String.split(message, "\n")
+
+    [method, path_with_query | _ ] = List.first(lines) |> String.split
+    headers = Enum.slice(lines, 1..-3) |> Enum.map(&String.split(&1, ":", parts: 2) |> List.to_tuple) |> Map.new
+    %URI{path: path, query: query} = URI.parse(path_with_query)
+    params = URI.decode_query(query)
+
+    %Escher.Request{method: method, path: path, params: params, headers: headers}
   end
 
 
