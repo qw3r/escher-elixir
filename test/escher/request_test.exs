@@ -1,5 +1,6 @@
 defmodule EscherTest.RequestTest do
   use ExUnit.Case
+  doctest Escher.Utils
 
   describe "Escher.Utils.from_url/1" do
     test "returns an Escher.Request struct" do
@@ -17,16 +18,16 @@ defmodule EscherTest.RequestTest do
   end
 
 
-  describe "Escher.Utils.from_message/1" do
+  describe "Escher.Utils.from_raw_request/1" do
     test "returns an Escher.Request struct" do
       req = "GET /maps?zoom=1 HTTP/1.1\nDate:Mon, 09 Sep 2011 23:36:00 GMT\nHost:www.google.com\n\n"
-      actual_request = Escher.Request.from_message(req)
+      actual_request = Escher.Request.from_raw_request(req)
 
       expected_request = %Escher.Request{
         method: "GET",
         path: "/maps",
-        params: %{"zoom" => "1"},
-        headers: %{"Host" => "www.google.com", "Date" => "Mon, 09 Sep 2011 23:36:00 GMT"}
+        params: [{"zoom", "1"}],
+        headers: [{"Date", "Mon, 09 Sep 2011 23:36:00 GMT"}, {"Host", "www.google.com"}]
       }
 
       assert actual_request == expected_request
@@ -34,39 +35,18 @@ defmodule EscherTest.RequestTest do
   end
 
 
-  describe "Escher.Utils.canonicalize/1" do
-    test "returns the canonicalized request" do
-      request = %Escher.Request{
-        method: "GET",
-        path: "/maps",
-        params: %{"zoom" => "1"},
-        headers: %{"host" => "www.google.com"},
-      }
+  test_case_runner = fn(test_case) ->
+#    if String.ends_with?(test_case.name, ["get-slashes"]) do
+#      @tag :skip
+#    end
+    test "Escher.Request.canonicalize/1 for #{test_case.name}" do
+      expected = unquote(test_case.canonical_request)
+      actual = unquote(test_case.request) |> Escher.Request.from_raw_request |> Escher.Request.canonicalize
 
-      canonical_request = Escher.Request.canonicalize(request)
-
-      assert canonical_request == "GET\n/maps\nzoom=1\nhost:www.google.com\n"
-
+      assert actual == expected
     end
   end
 
-
-#  Escher.TestHelper.aws_test_cases
-#  |> Enum.each(fn(%Escher.TestCase{}) ->
-#    test "for #{input}" do
-#      assert Mymodule.myfunction(unquote(input)) == unquote(expected_output)
-#    end
-#  end
-#
-#
-#  defp test_case(%Escher.TestCase{name: name}) do
-#    describe name do
-#      test "canonicalize" do
-#
-#        asset Escher.Request.
-#      end
-#    end
-#  end
-
+  Escher.TestHelper.aws_test_cases |> Enum.each(test_case_runner)
 
 end
