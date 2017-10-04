@@ -3,17 +3,23 @@ defmodule EscherTest.RequestTest do
   doctest Escher.Utils
 
   describe "Escher.Utils.from_url/1" do
-    test "returns an Escher.Request struct" do
-      actual_request = Escher.Request.from_url("https://www.google.com/maps?zoom=1")
-
-      expected_request = %Escher.Request{
-        method: "GET",
-        path: "/maps",
-        params: %{"zoom" => "1"},
-        headers: %{"host" => "www.google.com"}
+    data = [
+      {
+        "https://google.com/maps?zoom=1",
+        %Escher.Request{method: "GET", path: "/maps", params: %{"zoom" => "1"}, headers: %{"host" => "google.com"}}
+      },
+      {
+        "https://google.com/maps",
+        %Escher.Request{method: "GET", path: "/maps", params: %{}, headers: %{"host" => "google.com"}}
       }
+    ]
+    for {url, expected_request} <- data do
+      @url url
+      @expected_request expected_request
 
-      assert actual_request == expected_request
+      test "returns proper %Escher.Request for URL: #{@url}" do
+        assert Escher.Request.from_url(@url) == @expected_request
+      end
     end
   end
 

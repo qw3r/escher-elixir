@@ -5,7 +5,7 @@ defmodule Escher.Request do
 
   def from_url(url) do
     uri = URI.parse(url)
-    params = URI.decode_query(uri.query)
+    params = URI.decode_query(uri.query || "")
     headers = %{"host" => uri.host}
 
     %Escher.Request{path: uri.path, params: params, headers: headers}
