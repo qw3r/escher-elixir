@@ -1,6 +1,6 @@
 defmodule Escher.Request do
 
-  defstruct method: "GET", path: '/', params: [], headers: [], body: ""
+  defstruct method: "GET", path: '/', params: [], headers: [], body: "", scheme: nil
 
 
   def from_url(url) do
@@ -8,7 +8,7 @@ defmodule Escher.Request do
     params = URI.decode_query(uri.query || "")
     headers = %{"host" => uri.host}
 
-    %Escher.Request{path: uri.path, params: params, headers: headers}
+    %Escher.Request{path: uri.path, params: params, headers: headers, scheme: uri.scheme}
   end
 
 

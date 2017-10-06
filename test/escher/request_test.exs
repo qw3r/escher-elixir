@@ -6,11 +6,16 @@ defmodule EscherTest.RequestTest do
     data = [
       {
         "https://google.com/maps?zoom=1",
-        %Escher.Request{method: "GET", path: "/maps", params: %{"zoom" => "1"}, headers: %{"host" => "google.com"}}
+        %Escher.Request{
+          method: "GET", path: "/maps", params: %{"zoom" => "1"},
+          headers: %{"host" => "google.com"}, scheme: "https"
+        }
       },
       {
-        "https://google.com/maps",
-        %Escher.Request{method: "GET", path: "/maps", params: %{}, headers: %{"host" => "google.com"}}
+        "http://google.com/maps",
+        %Escher.Request{
+          method: "GET", path: "/maps", params: %{},
+          headers: %{"host" => "google.com"}, scheme: "http"}
       }
     ]
     for {url, expected_request} <- data do
