@@ -7,9 +7,23 @@ defmodule Escher.Utils do
   end
 
 
-  def format_date(time) do
-    format_datetime(time)
+  def format_date(datetime) do
+    format_datetime(datetime)
     |> String.replace(~r/T.*$/, "")
+  end
+
+
+  def build_string_to_sign(canonical_request, datetime, scope) do
+    timestamp = format_datetime(datetime)
+    date = format_date(datetime)
+    hashed_canonical_request = hash_sha256(canonical_request)
+
+    "AWS4-HMAC-SHA256\n#{timestamp}\n#{date}/#{scope}\n#{hashed_canonical_request}"
+  end
+
+
+  defp hash_sha256(data) do
+    :crypto.hash(:sha256, data) |> Base.encode16(case: :lower)
   end
 
 end

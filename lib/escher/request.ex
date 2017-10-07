@@ -36,6 +36,11 @@ defmodule Escher.Request do
   end
 
 
+  def build_string_to_sign(canonical_request) when is_binary(canonical_request) do
+    canonical_request
+  end
+
+
   defp parse_params(nil), do: []
   defp parse_params(query), do: URI.encode(query) |> URI.query_decoder |> Enum.to_list
   defp parse_params(query, nil), do: parse_params(query)

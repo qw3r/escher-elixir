@@ -1,8 +1,9 @@
 defmodule EscherTest.RequestTest do
   use ExUnit.Case
-  doctest Escher.Utils
+  doctest Escher.Request
 
-  describe "Escher.Utils.from_url/1" do
+
+  describe "Escher.Request.from_url/1" do
     data = [
       {
         "https://google.com/maps?zoom=1",
@@ -22,7 +23,7 @@ defmodule EscherTest.RequestTest do
       @url url
       @expected_request expected_request
 
-      test "returns proper %Escher.Request for URL: #{@url}" do
+      test "returns proper %Escher.Request{} for URL: #{@url}" do
         assert Escher.Request.from_url(@url) == @expected_request
       end
     end
@@ -46,18 +47,16 @@ defmodule EscherTest.RequestTest do
   end
 
 
-  test_case_runner = fn(test_case) ->
-#    if String.ends_with?(test_case.name, ["get-slashes"]) do
-#      @tag :skip
-#    end
-    test "Escher.Request.canonicalize/1 for #{test_case.name}" do
-      expected = unquote(test_case.canonical_request)
-      actual = unquote(test_case.request) |> Escher.Request.from_raw_request |> Escher.Request.canonicalize
+  describe "Escher.Request.canonicalize/1" do
+    test_case_runner = fn(test_case) ->
+      test "returns with the canonicalized request (#{test_case.name})" do
+        expected = unquote(test_case.canonical_request)
+        actual = unquote(test_case.request) |> Escher.Request.from_raw_request |> Escher.Request.canonicalize
 
-      assert actual == expected
+        assert actual == expected
+      end
     end
+
+    Escher.TestHelper.aws_test_cases |> Enum.each(test_case_runner)
   end
-
-  Escher.TestHelper.aws_test_cases |> Enum.each(test_case_runner)
-
 end
