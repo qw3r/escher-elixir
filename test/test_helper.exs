@@ -1,15 +1,19 @@
 ExUnit.start()
 
 defmodule Escher.TestCase do
+  @moduledoc false
   defstruct [:name, :request, :canonical_request, :signed_request, :string_to_sign]
 end
 
 
 defmodule Escher.TestHelper do
+  @moduledoc false
   @path "test/fixtures"
 
   def aws_test_cases do
-    Path.wildcard(Path.join(@path, "aws4_test_suite/*.req"))
+    @path
+    |> Path.join("aws4_test_suite/*.req")
+    |> Path.wildcard
     |> Enum.map(&build_test_case/1)
   end
 

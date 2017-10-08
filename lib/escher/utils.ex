@@ -1,14 +1,17 @@
 defmodule Escher.Utils do
+  @moduledoc false
 
   def format_datetime(datetime) do
-    NaiveDateTime.to_iso8601(datetime)
+    datetime
+    |> NaiveDateTime.to_iso8601
     |> String.replace(~r/[:-]/, "")
     |> String.replace(~r/\.\d*$/, "Z")
   end
 
 
   def format_date(datetime) do
-    format_datetime(datetime)
+    datetime
+    |> format_datetime
     |> String.replace(~r/T.*$/, "")
   end
 
@@ -23,7 +26,9 @@ defmodule Escher.Utils do
 
 
   defp hash_sha256(data) do
-    :crypto.hash(:sha256, data) |> Base.encode16(case: :lower)
+    :sha256
+    |> :crypto.hash(data)
+    |> Base.encode16(case: :lower)
   end
 
 end

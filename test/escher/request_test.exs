@@ -1,4 +1,5 @@
 defmodule EscherTest.RequestTest do
+  @moduledoc false
   use ExUnit.Case
   doctest Escher.Request
 

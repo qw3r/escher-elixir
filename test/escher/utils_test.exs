@@ -1,4 +1,5 @@
 defmodule EscherTest.UtilsTest do
+  @moduledoc false
   use ExUnit.Case
   doctest Escher.Utils
 
